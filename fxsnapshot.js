@@ -4,7 +4,7 @@
 // https://github.com/fxhash/gcloud-functions/tree/master/website-capture
 
 const puppeteer = require('puppeteer');
-const fs = require('fs').promises;
+const fs = require('fs');
 
 const argv = require('yargs')
   .scriptName('fxsnapshot')
@@ -23,13 +23,22 @@ const argv = require('yargs')
     height: 800,
     timeout: 120,
     captureViewport: false,
+    preview: false,
+    folder: 'images',
+    gpu: true,
+    parameter: ''
   })
   .describe('url', 'Local token url')
   .help()
   .version(false)
   .example([
-    ['$0 256', 'Capture 256 images'],
-    ['$0 --url="file://.../" 256', 'Use custom url'],
+    ['$0 256', 'Capture 256 images. Must be set!'],
+    ['$0 --url="file://.../" 128', 'Use custom url'],
+    ['$0 --folder myFolder 128', 'Save to custom folder'],
+    ['$0 --width 320 --height 320 128', 'Set image dimensions'],
+    ['$0 --preview true 128', 'Show rendering process in browser'],
+    ['$0 --parameter palette 128', 'Use global variable in filename'],
+    ['$0 --gpu false 128', 'Use Google SwiftShader instead of default WEBGL renderer'],
   ])
   .argv;
 
@@ -71,11 +80,15 @@ const waitPreview = (page) => {
 
 (async () => {
 
+  let gpuMode = '';
+  if (argv.gpu == false) gpuMode = '--use-gl=swiftshader'
+
   let browser = await puppeteer.launch({
     ignoreHTTPSErrors: true,
     args: [
-      '--use-gl=swiftshader',
-    ],
+      gpuMode
+    ], 
+    headless: !argv.preview,
   });
 
   if (!browser) {
@@ -96,12 +109,19 @@ const waitPreview = (page) => {
 
   let total = parseInt(argv.count);
 
+  if (!fs.existsSync(argv.folder)){
+    fs.mkdirSync(argv.folder, { recursive: true });
+  }
+
   for (let i = 1; i <= total; i++) {
     await page.goto(argv.url);
     await waitPreview(page);
     const fxhash = await page.evaluate(() => window.$fx.hash);
+    let param = ''
+    if (argv.parameter) param = await page.evaluate(eval(`() => ${argv.parameter}`));
+    // const param = await page.evaluate(eval(`() => ${argv.parameter}`));
     const iteration = String(i).padStart(4, '0');
-    const f = `images/${iteration}-${fxhash}.png`;
+    const f = `${argv.folder}/${param}-${iteration}-${fxhash}.png`;
     console.log(f);
     await saveFrame(page, f);
   }
