@@ -28,6 +28,8 @@ Use custom URL (http://localhost:8080/ by default):
 node fxsnapshot.js --url="file://..." <count>
 ```
 
+OPTIONAL
+
 Use custom folder to save outputs ("images" by default):
 ```
 node fxsnapshot.js --folder 'myFolder' <count>
