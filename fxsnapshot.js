@@ -18,7 +18,7 @@ const argv = require('yargs')
       })
   })
   .default({
-    url: 'http://localhost:3301/',
+    url: 'http://localhost:8080/',
     width: 800,
     height: 800,
     timeout: 120,

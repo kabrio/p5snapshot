@@ -13,12 +13,17 @@ Install dependencies:
 npm install
 ```
 
+Run project on local server on port 8080 (eg. using http-server or MAMP).
+```
+http-server -p 8080
+```
+
 Capture *count* images:
 ```
 node fxsnapshot.js <count>
 ```
 
-Use custom URL (http://localhost:3301/ by default):
+Use custom URL (http://localhost:8080/ by default):
 ```
 node fxsnapshot.js --url="file://..." <count>
 ```
@@ -45,4 +50,4 @@ node fxsnapshot.js --gpu false <count>
 
 
 The script will work only if you use a canvas and call
-$fx.preview(). Your token must be launched in parallel.
+$fx.preview(). Your token must be launched in parallel!
