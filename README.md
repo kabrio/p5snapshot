@@ -1,7 +1,8 @@
-Fxsnapshot
+FxSnapshot -> p5snapshot
 ==========
 
-Capture a set of images from your local token.
+Capture a set of images from your local fxhash token.
+Will soon also work with pure p5js projects.
 
 Install node:
 https://nodejs.org/en/download/
